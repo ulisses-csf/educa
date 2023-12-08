@@ -1,9 +1,16 @@
+---
+output: 
+  html_document: 
+    toc: yes
+editor_options: 
+  chunk_output_type: inline
+---
 # Código para Análise dos Microdados do Censo Escolar
-Repositório códigos dados educacionais
+Repositório de códigos de dados educacionais
 
 Carregando os pacotes necessarios para  realizar tratamento na base de dados
 
-```
+``` 
 library(dplyr)
 ```
 
@@ -89,7 +96,6 @@ DADO CONFERIDO PARA GOIAS NO SITE, CONFERE COM O QUE TA LA
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(raca_cor = ifelse(TP_COR_RACA %in% c(2,3),'NEGROS',
          ifelse(TP_COR_RACA %in% c(1),'BRANCOS','NSA')),
@@ -107,7 +113,6 @@ bATE COM O RESULTADO DO SITE
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(raca_cor = ifelse(TP_COR_RACA %in% c(2,3),'NEGROS',
       ifelse(TP_COR_RACA %in% c(1),'BRANCOS','NSA')),
@@ -128,7 +133,6 @@ bate com o site
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
 mutate(raca_cor = ifelse(TP_COR_RACA %in% c(2,3),'NEGROS','BRANCOS')) %>% 
 mutate(tis1 = ifelse(TP_ETAPA_ENSINO %in% c(25,30,35) & NU_IDADE_REFERENCIA>= 17,1,0),
@@ -150,7 +154,6 @@ Os percentuais estão muito proximos com o do site
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(raca_cor = ifelse(TP_COR_RACA %in% c(2,3),'NEGROS','BRANCOS')) %>% 
   mutate(tis1 = ifelse(TP_ETAPA_ENSINO %in% c(25,30,35) & NU_IDADE_REFERENCIA>= 17,1,0),
@@ -178,7 +181,6 @@ Indicador 05 percentual de pessoas por etapa de ensino e sexo 15 a 17 anos
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
   idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17','outros')) %>%
@@ -195,7 +197,6 @@ Valores batem com o site, pequena distroção na rede privada
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:4)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
   idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17','outros'),
@@ -214,7 +215,6 @@ Valores batem com o site
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
          idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17','outros'),
@@ -233,7 +233,6 @@ Valores batem com o que ta no site, inclusive os totais
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
          idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17',
@@ -250,7 +249,6 @@ Indicador escola privada
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(4)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
          idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17',
@@ -267,7 +265,6 @@ Indicador escola pública
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
          idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17',
@@ -287,7 +284,6 @@ Não consegui montar a variavel turno integral
 ```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
-  filter(CO_UF %in% c(52)) %>% 
   filter(TP_DEPENDENCIA %in% c(1:3)) %>% 
   mutate(ensino = ifelse(TP_ETAPA_ENSINO %in% c(25:38),'MEDIO','FUNDA'),
          idades = ifelse(NU_IDADE_REFERENCIA %in% c(15,16,17),'15 a 17',
