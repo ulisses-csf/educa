@@ -1,37 +1,56 @@
 # Código para Análise dos Microdados do Censo Escolar
 Repositório códigos dados educacionais
 
-#Carregando os pacotes necessarios para  ler a base de dados
+Carregando os pacotes necessarios para  realizar tratamento na base de dados
 
-``library(dplyr)``
+```
+library(dplyr)
+```
 
-#Lendo a base inicial para teste 
+A seguir vamos importar duas bases de dados, uma de matrículas para o Centro Oeste e outra de Turmas.
+Vamos utilizar essa base como referência da programação.
 
-``MATRICULA_CO <- read.csv("~/CensoEscolar/2019/microdados_educacao_basica_2019/microdados_educacao_basica_2019/DADOS/MATRICULA_CO.CSV", sep="|")``
+```
+MATRICULA_CO <- read.csv("~/CensoEscolar/2019/microdados_educacao_basica_2019/microdados_educacao_basica_2019/DADOS/MATRICULA_CO.CSV", sep="|")
 
-``TURMAS <- read.csv("~/Censo Escolar/2019/microdados_educacao_basica_2019/microdados_educacao_basica_2019/DADOS/TURMAS.CSV", sep="|")``
+TURMAS <- read.csv("~/Censo Escolar/2019/microdados_educacao_basica_2019/microdados_educacao_basica_2019/DADOS/TURMAS.CSV", sep="|")
+```
 
-#Visualizando as variaveis na base de dados matricula para o Centro OESTE
+Agora estou salvando os dados num objeto chamdo co. Depois utilizo a função `names` para ver as variáveis da base de dados.
+```
+co = MATRICULA_CO
 
-``co = MATRICULA_CO``
+names(co)
+```
 
-``names(co)``
+Agora utilizando as indicações de filtros do INEP, pego as matrículas do Centro Oeste.
 
-#Realizando os filtros para os valores baterem com o do inep
+```
 co = co %>% 
-  filter(TP_TIPO_ATENDIMENTO_TURMA %in% c(1,2)) #3.666.663
+  filter(TP_TIPO_ATENDIMENTO_TURMA %in% c(1,2)) 
+```
+Conferi o resultado com as sinopses estatísticas do censo escolar. 
+O número de matrícula foi de 3.666.663, o mesmo da sinopse  
 
-#Visualizando as variaveis na base de dados TURMAS
+Salvei a base de dados TURMAS num objeto chamado turma. Em seguida, visualizei os nomes das 
+variáveis na base de dados.
+
+```
 turma = TURMAS
 names(turma)
+```
 
-###Agora fazer um filtro para GOIAS e Juntar com a base de turmas em seguida
+Agora fazer um filtro para GOIAS e Juntar com a base de turmas em seguida
+
+```
 go = co %>% 
   filter(CO_UF == 52)
+```
 
-#Pegando somente a variavel tx_hr_inicial e final para fazer o turno
+Pegando somente a variavel tx_hr_inicial e final para fazer o turno
+
+```
 turma = turma %>% select(TX_HR_INICIAL, ID_TURMA)
-
 
 goias = go %>% 
   inner_join(turma, by ='ID_TURMA')
@@ -41,15 +60,15 @@ head(goias)
 co = goias
 
 names(co)
+```
 
-###############################################################################
-###############################################################################
-###########################DESIGUALDADE RACIAL#################################
-###############################################################################
-###############################################################################
+# Desigualdade racial
 
-#INDICADOR 01 % DE MAT NO EM POR COR/RAÇA
-#DADO CONFERIDO PARA GOIAS NO SITE, CONFERE COM O QUE TA LA
+INDICADOR 01: Percentual de matrículas no Ensino Médio por Cor ou Raça.  
+
+DADO CONFERIDO PARA GOIAS NO SITE, CONFERE COM O QUE TA LA
+
+```
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
@@ -60,9 +79,13 @@ co %>%
   count() %>% 
   ungroup() %>% 
   mutate(percentual = n/sum(n))
+```
 
-#INDICADOR 02 % DE MAT NO EM POR COR/RAÇA 15 A 17 ANOS
-#DADO CONFERIDO PARA GOIAS NO SITE, CONFERE COM O QUE TA LA
+
+INDICADOR 02: Percentual de Matrpciulas no Ensino Médio por Cor ou Raça em estudantes com idades entre 15 e 17 anos  
+DADO CONFERIDO PARA GOIAS NO SITE, CONFERE COM O QUE TA LA
+
+```
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
@@ -77,9 +100,10 @@ co %>%
   group_by(raca_cor) %>% 
   mutate(p = n/sum(n)) %>% 
   filter(idades == '15 a 17')
-
-#INDICADOR 03 % DE MAT NO EM POR COR/RAÇA por turno
-#bATE COM O RESULTADO DO SITE
+```
+INDICADOR 03 % DE MAT NO EM POR COR/RAÇA por turno  
+bATE COM O RESULTADO DO SITE
+```
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
@@ -96,10 +120,11 @@ co %>%
   ungroup() %>% 
   group_by(raca_cor) %>% 
   mutate(p = n*100/sum(n))
+```
 
-
-#INDICADOR 04 distorção idade serie ensino medio por cor
-#bate com o site
+INDICADOR 04 distorção idade serie ensino medio por cor  
+bate com o site
+```
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
@@ -117,9 +142,11 @@ tis = tis1+tis2+tis3+tis4) %>%
   group_by(raca_cor) %>% 
   mutate(p = n*100/sum(n)) %>% 
   filter(tis == 1)
+```
 
-#Indicador por turno
-#Os percentuais estão muito proximos com o do site
+Indicador por turno
+Os percentuais estão muito proximos com o do site
+```
 co %>% 
   filter(TP_COR_RACA %in% c(1,2,3)) %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
@@ -143,20 +170,12 @@ co %>%
   group_by(turno, raca_cor) %>% 
   mutate(p = round(100*n/sum(n),1)) %>% 
   filter(tis ==1)
+```
+# DESIGUALDADE GENERO
 
-
-
-
-
-###############################################################################
-###############################################################################
-###########################DESIGUALDADE GENERO#################################
-###############################################################################
-###############################################################################
-
-#Ospercentuais batem com o site, os totais não.
-
-#indicador 05 percentual de pessoas por etapa de ensino e sexo 15 a 17 anos
+Ospercentuais batem com o site, os totais não.  
+Indicador 05 percentual de pessoas por etapa de ensino e sexo 15 a 17 anos
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -169,10 +188,11 @@ co %>%
   ungroup() %>% 
   group_by(TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-
-#Escola publica ou privada por sexo
-#Valores batem com o site, pequena distroção na rede privada
+Escola publica ou privada por sexo  
+Valores batem com o site, pequena distroção na rede privada
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -186,11 +206,12 @@ co %>%
   ungroup() %>% 
   group_by(pub.priv,TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-
-###Dependencia administrativa
-#Escola publica por ente federativo por sexo
-#Valores batem com o site
+Dependencia administrativa  
+Escola publica por ente federativo por sexo  
+Valores batem com o site  
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38,16:21,41)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -204,11 +225,12 @@ co %>%
   count() %>% 
   ungroup() %>% 
   group_by(pub,TP_SEXO) %>% 
-  mutate(p = n/sum(n)) 
+  mutate(p = n/sum(n))
+```
 
-#indicador 06 percentual de pessoas por etapa de ensino e sexo 
-#15 a 17 anos e 18 a 29 anos
-#Valores batem com o que ta no site, inclusive os totais
+Indicador 06 percentual de pessoas por etapa de ensino e sexo  15 a 17 anos e 18 a 29 anos  
+Valores batem com o que ta no site, inclusive os totais
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -222,9 +244,10 @@ co %>%
   ungroup() %>% 
   group_by(TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-
-#Indicador escola privada
+Indicador escola privada
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -238,9 +261,10 @@ co %>%
   ungroup() %>% 
   group_by(TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-
-#Indicador escola pública
+Indicador escola pública
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -256,10 +280,11 @@ co %>%
   ungroup() %>% 
   group_by(TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-
-#indicador 07 idade correta por turno e sexo
-#Não consegui montar a variavel turno integral
+indicador 07 idade correta por turno e sexo  
+Não consegui montar a variavel turno integral
+```
 co %>% 
   filter(TP_ETAPA_ENSINO %in% c(25:38)) %>%
   filter(CO_UF %in% c(52)) %>% 
@@ -276,12 +301,11 @@ co %>%
   ungroup() %>% 
   group_by(TP_SEXO) %>% 
   mutate(p = n/sum(n)) 
+```
 
-###############################################################################
-###############################################################################
-###########################Educação Especial###################################
-###############################################################################
-###############################################################################
+# Educação Especial
+## Dar atenção depois, vai ficar para uma segunda etapa  
+```
 co %>% 
   filter(IN_ESPECIAL_EXCLUSIVA == 1 | (IN_NECESSIDADE_ESPECIAL == 1&
           IN_ESPECIAL_EXCLUSIVA == 0)) %>%
@@ -309,3 +333,4 @@ co %>%
   ungroup() %>% 
   #group_by(def) %>% 
   mutate(p = 100*n/sum(n)) 
+```
